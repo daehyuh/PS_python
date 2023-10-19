@@ -14,7 +14,6 @@ start = 0
 end = 0
 cost = 0
 
-
 for i in range(c):
     cost = arrSaleSum[i]
     if cost > b:

@@ -1,39 +1,35 @@
 import sys
-input = lambda: sys.stdin.readline().rstrip()
+from queue import PriorityQueue
+input = sys.stdin.readline
 
-V, E = map(int, input().split())
-edges = []
-for _ in range(E):
-    A, B, C = map(int, input().split())
-    edges.append((A, B, C))
-edges.sort(key=lambda x: x[2])
+N, M = map(int, input().split())
+pq = PriorityQueue()
+parent = [0] * (N+1)
 
+for i in range(N+1):
+    parent[i] = i
 
-# Union-Find
-parent = [i for i in range(V+1)]
-
-def get_parent(x):
-    if parent[x] == x:
-        return x
-    parent[x] = get_parent(parent[x])
-    return parent[x]
-
-def union_parent(a, b):
-    a = get_parent(a)
-    b = get_parent(b)
-
-    if a < b:
-        parent[b] = a
+for i in range(M):
+    s, e, w = map(int, input().split())
+    pq.put((w,s,e))
+def find(a):
+    if a == parent[a]:
+        return a
     else:
-        parent[a] = b
+        parent[a] = find(parent[a])
+        return parent[a]
+def union(a, b):
+    a = find(a)
+    b = find(b)
+    if a != b:
+        parent[b]=a
+useEdge = 0
+res = 0
 
-def same_parent(a, b):
-    return get_parent(a) == get_parent(b)
-
-
-answer = 0
-for a, b, cost in edges:
-    if not same_parent(a, b):
-        union_parent(a, b)
-        answer += cost
-print(answer)
+while useEdge < N - 1:
+    w, s, e = pq.get()
+    if find(s) != find(e):
+        union(s, e)
+        res += w
+        useEdge+=1
+print(res)
